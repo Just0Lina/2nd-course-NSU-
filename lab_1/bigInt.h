@@ -15,37 +15,37 @@ class BigInt {
   int comparasion(std::string other);
   ~BigInt() = default;
 
-  bool empty();                      //++
-  BigInt& operator=(const BigInt&);  //++
-  BigInt& operator=(BigInt&&);       //++
-  bool operator[](size_t pos);
-  const bool operator[](size_t pos) const;
+  bool empty();                             //++
+  BigInt& operator=(const BigInt&);         //++
+  BigInt& operator=(BigInt&&);              //++
+  bool operator[](size_t pos);              //++
+  const bool operator[](size_t pos) const;  //++
 
   BigInt operator~() const;  //++
 
-  BigInt& operator++();  //++
-  const BigInt operator++(int) const;
-  BigInt& operator--();
-  const BigInt operator--(int) const;
+  BigInt& operator++();                //++
+  const BigInt operator++(int) const;  //+
+  BigInt& operator--();                //++
+  const BigInt operator--(int) const;  //++
 
   BigInt& operator+=(const BigInt&);
   BigInt& operator*=(const BigInt&);
   BigInt& operator-=(const BigInt&);
   BigInt& operator/=(const BigInt&);
+  BigInt& operator%=(const BigInt&);
   BigInt& operator^=(const BigInt&);  //+
-  BigInt& operator%=(const BigInt&);  //+
   BigInt& operator&=(const BigInt&);  //+
   BigInt& operator|=(const BigInt&);  //+
 
   BigInt operator+() const;  // unary +
   BigInt operator-() const;  // unary -
 
-  bool operator==(const BigInt&) const;
-  bool operator!=(const BigInt&) const;
-  bool operator<(const BigInt&) const;
-  bool operator>(const BigInt&) const;
-  bool operator<=(const BigInt&) const;
-  bool operator>=(const BigInt&) const;
+  bool operator==(const BigInt& other) const;  //+
+  bool operator!=(const BigInt& other) const;  //+
+  bool operator<(const BigInt& other) const;   //++
+  bool operator>(const BigInt& other) const;   //+
+  bool operator<=(const BigInt& other) const;  //+
+  bool operator>=(const BigInt& other) const;  //+
 
   operator int() const;
   operator std::string() const;

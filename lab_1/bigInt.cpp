@@ -56,31 +56,149 @@ bool BigInt::empty() { return big_int_.empty(); }
 
 BigInt BigInt::operator~() const {
   BigInt result(*this);
-  for (size_t i = 0; i < big_int_.size(); ++i) {
+  for (int i = 0; i < big_int_.size(); ++i) {
     result.big_int_[i] = ~result.big_int_[i];
   }
   return result;
 }
 
 BigInt &BigInt::operator^=(const BigInt &other) {
-  for (size_t i = 0; i < big_int_.size(); ++i) {
-    big_int_[i] = big_int_[i] ^ other.big_int_[i];
+  for (int i = big_int_.size() - 1, j = other.big_int_.size() - 1; i >= 0;
+       --i, --j) {
+    if (j >= 0) {
+      big_int_[i] = big_int_[i] ^ other.big_int_[j];
+    } else {
+      break;
+    }
   }
+
   return *this;
 }
 
 // BigInt &BigInt::operator%=(const BigInt &);
 
 BigInt &BigInt::operator&=(const BigInt &other) {
-  for (size_t i = 0; i < big_int_.size(); ++i) {
-    big_int_[i] = big_int_[i] & other.big_int_[i];
+  for (int i = big_int_.size() - 1, j = other.big_int_.size() - 1; i >= 0;
+       --i, --j) {
+    if (j >= 0) {
+      big_int_[i] = big_int_[i] & other.big_int_[j];
+    } else {
+      big_int_[i] = 0;
+    }
   }
   return *this;
 }
 
 BigInt &BigInt::operator|=(const BigInt &other) {
-  for (size_t i = 0; i < big_int_.size(); ++i) {
-    big_int_[i] = big_int_[i] | other.big_int_[i];
+  for (int i = big_int_.size() - 1, j = other.big_int_.size() - 1; i >= 0;
+       --i, --j) {
+    if (j >= 0) {
+      big_int_[i] = big_int_[i] | other.big_int_[j];
+    } else {
+      break;
+    }
+  }
+  return *this;
+}
+
+BigInt &BigInt::operator++() {
+  for (int i = big_int_.size() - 1; i >= 0; --i) {
+    if (big_int_[i] == 1) {
+      big_int_[i] = 0;
+      if (!i) big_int_.insert(big_int_.begin(), 1);
+    } else {
+      big_int_[i] = 1;
+      break;
+    }
+  }
+  return *this;
+}
+
+const BigInt BigInt::operator++(int) const {
+  BigInt old(*this);
+  std::cout << "HERE" << old[0] << " " << old[1] << std::endl;
+  ++old;
+  return old;
+}
+
+BigInt &BigInt::operator--() {
+  for (int i = big_int_.size() - 1; i >= 0; --i) {
+    if (!big_int_[i]) {
+      big_int_[i] = 1;
+      // if (!i) big_int_.insert(big_int_.begin(), 1);
+    } else {
+      big_int_[i] = 0;
+      if (!i) {
+        while (!big_int_[i]) {
+          big_int_.erase(big_int_.begin());
+          ++i;
+        }
+      }
+      break;
+    }
+  }
+  return *this;
+}
+
+const BigInt BigInt::operator--(int) const {
+  BigInt old(*this);
+  std::cout << "HERE" << old[0] << " " << old[1] << std::endl;
+  --old;
+  return old;
+}
+
+bool BigInt::operator<(const BigInt &other) const {
+  if (big_int_.size() < other.big_int_.size()) {
+    return 1;
+  } else if (big_int_.size() > other.big_int_.size()) {
+    return 0;
+  } else {
+    for (int i = big_int_.size() - 1; i >= 0; --i) {
+      if (big_int_[i] > other.big_int_[i])
+        return 1;
+      else if (big_int_[i] < other.big_int_[i])
+        return 0;
+    }
+  }
+  return 0;
+}
+
+bool BigInt::operator!=(const BigInt &other) const {
+  if (big_int_.size() != other.big_int_.size()) {
+    return 1;
+  } else {
+    for (int i = big_int_.size() - 1; i >= 0; --i) {
+      if (big_int_[i] != other.big_int_[i]) return 1;
+    }
+  }
+  return 0;
+}
+
+bool BigInt::operator==(const BigInt &other) const { return !(*this != other); }
+
+bool BigInt::operator>(const BigInt &other) const { return other < *this; }
+
+bool BigInt::operator<=(const BigInt &other) const { return !(other < *this); }
+
+bool BigInt::operator>=(const BigInt &other) const { return !(*this < other); }
+
+BigInt &BigInt::operator+=(const BigInt &other) {
+  bool res, buf;
+  for (int i = big_int_.size() - 1, j = other.big_int_.size() - 1; j >= 0;
+       --i, --j) {
+    std::cout << j << " ";
+    bool bit1 = big_int_[i], bit2 = other.big_int_[j];
+    if (!i) {
+      res = bit2;
+      if (buf) {
+        res = (bit1 + bit2 + buf) % 2;
+        buf = (bit1 + bit2 + buf) / 2;
+      }
+      big_int_.insert(big_int_.begin(), res);
+    } else {
+      res = (bit1 + bit2 + buf) % 2;
+      buf = (bit1 + bit2 + buf) / 2;
+    }
   }
   return *this;
 }
