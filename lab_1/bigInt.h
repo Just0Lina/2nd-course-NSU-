@@ -28,7 +28,7 @@ class BigInt {
   BigInt& operator--();          //++
   const BigInt operator--(int);  //++
 
-  BigInt& operator+=(const BigInt&);
+  BigInt& operator+=(const BigInt&);  //++
   BigInt& operator*=(const BigInt&);
   BigInt& operator-=(const BigInt&);
   BigInt& operator/=(const BigInt&);
@@ -47,12 +47,19 @@ class BigInt {
   bool operator<=(const BigInt& other) const;  //+
   bool operator>=(const BigInt& other) const;  //+
 
+  void mini_inc(std::vector<bool>& big_int_);
+  void mini_dec(std::vector<bool>& big_int_);
+  void minisum(const BigInt& other);
+  void minisub(const BigInt& other);
+  bool is_less(const BigInt& other) const;
+
   operator int() const;
   operator std::string() const;
 
   size_t size() const;  // size in bytes
 
  private:
+  bool sign_ = true;
   std::vector<bool> big_int_;
 };
 
