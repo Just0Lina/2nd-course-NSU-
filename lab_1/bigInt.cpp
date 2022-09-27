@@ -2,17 +2,17 @@
 
 #include <algorithm>
 
-BigInt::BigInt(const int number) : sign_(number >= 0) {
+BigInt::BigInt(const int number) : sign_(number < 0) {
   int tmp_number = number >= 0 ? number : number * (-1);
   for (; tmp_number; tmp_number /= 2) {
     big_int_.insert(big_int_.begin(), tmp_number % 2);
   }
 }
 
-BigInt::BigInt(std::string number) : sign_(number[0] != '-') {
+BigInt::BigInt(std::string number) : sign_(number[0] == '-') {
   long long bigInt = 0;
   int size = number.size();
-  for (int i = 0; i < size; ++i) {
+  for (int i = sign_; i < size; ++i) {
     int value = number[i];
     if (!isdigit(value))
       throw std::invalid_argument("Error: found character is not a digit");
@@ -58,12 +58,13 @@ bool BigInt::operator[](size_t pos) { return big_int_[pos]; }
 const bool BigInt::operator[](size_t pos) const { return big_int_[pos]; }
 
 bool BigInt::empty() { return big_int_.empty(); }
+bool BigInt::sign() { return sign_; }
 
 BigInt BigInt::operator~() const {
   BigInt result(*this);
-  for (int i = 0; i < big_int_.size(); ++i) {
-    result.big_int_[i] = result.big_int_[i] ? 0 : 1;
-  }
+  ++result;
+  if (!result.sign_) result.big_int_.erase(result.big_int_.begin());
+  result.sign_ = !sign_;
   return result;
 }
 
@@ -107,9 +108,11 @@ BigInt &BigInt::operator|=(const BigInt &other) {
 }
 
 void BigInt::mini_dec(std::vector<bool> &big_int_) {
+  // bool buf = 0;
   for (int i = big_int_.size() - 1; i >= 0; --i) {
     if (!big_int_[i]) {
       big_int_[i] = 1;
+      // buf = 1;
       if (!i) big_int_.insert(big_int_.begin(), 1);
     } else {
       big_int_[i] = 0;
@@ -143,7 +146,7 @@ const BigInt BigInt::operator++(int) {
 }
 
 BigInt &BigInt::operator++() {
-  if (sign_) {
+  if (!sign_) {
     mini_inc(big_int_);
   } else {
     mini_dec(big_int_);
@@ -151,7 +154,7 @@ BigInt &BigInt::operator++() {
   return *this;
 }
 BigInt &BigInt::operator--() {
-  if (sign_) {
+  if (!sign_) {
     mini_dec(big_int_);
   } else {
     mini_inc(big_int_);
@@ -166,8 +169,8 @@ const BigInt BigInt::operator--(int) {
 }
 
 bool BigInt::operator<(const BigInt &other) const {
-  if (sign_ < other.sign_) return 1;
-  if (sign_ > other.sign_) return 0;
+  if (sign_ > other.sign_) return 1;
+  if (sign_ < other.sign_) return 0;
   if (sign_) return is_less(other);
   return other.is_less(*this);
   return 0;
@@ -223,12 +226,27 @@ void BigInt::minisum(const BigInt &other) {
 
 void BigInt::minisub(const BigInt &other) {
   BigInt tmp(other);
-  while (tmp.big_int_.size() < big_int_.size()) {
-    tmp.big_int_.insert(big_int_.begin(), 0);
+  bool res = 0;
+  int buf = 0;
+  for (int i = big_int_.size() - 1, j = other.big_int_.size() - 1;
+       j >= 0 || i >= 0 || buf; --i, --j) {
+    if (i >= 0 && j >= 0) {
+      bool bit1 = big_int_[i], bit2 = other.big_int_[j];
+      buf = bit1 - buf < bit2 ? 2 : 0;
+      big_int_[i] = (buf - bit2) % 2;
+      // buf = (bit1 - bit2 - buf) / 2;
+    } else if (i >= 0) {
+      if (big_int_[i]) {
+        big_int_[i] = false;
+        if (!i) {
+          while (!big_int_[i]) {
+            big_int_.erase(big_int_.begin());
+          }
+        }
+        break;
+      }
+    }
   }
-  tmp = ~tmp;
-  ++tmp;
-  minisum(tmp);
 }
 
 bool BigInt::is_less(const BigInt &other) const {
@@ -275,6 +293,7 @@ BigInt &BigInt::operator+=(const BigInt &other) {
       std::cout << "HERE" << std::endl;
       BigInt tmp(other);
       tmp.minisub(*this);
+      *this = tmp;
     } else {
       minisub(other);
     }
@@ -283,7 +302,7 @@ BigInt &BigInt::operator+=(const BigInt &other) {
 }
 
 BigInt &BigInt::operator-=(const BigInt &other) {
-  if (sign_ && !other.sign_)
+  if (!sign_ && other.sign_)
     minisum(other);
   else if (sign_ == other.sign_) {
     sign_ = is_less(other) ? !sign_ : sign_;
@@ -295,3 +314,5 @@ BigInt &BigInt::operator-=(const BigInt &other) {
   }
   return *this;
 }
+
+size_t BigInt::size() const { return big_int_.size(); }

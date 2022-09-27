@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <cmath>
+
 #include "bigInt.h"
 std::string to_binary_string(long long int n);
 
@@ -76,13 +78,26 @@ std::string to_binary_string(long long int n);
 // }
 
 // TEST(Operators, oper_negation) {
-//   long int number = 3454659609566;
-//   std::string num_s = std::to_string(number);
-//   BigInt bInt_a(num_s);
-//   BigInt bInt_b = ~bInt_a;
-//   std::string bin_val = to_binary_string(~number);
-//   for (int i = 0; i < bin_val.size(); ++i) {
-//     ASSERT_EQ(bInt_b[i], bool(bin_val[i] - '0'));
+//   for (int i = 0; i < 100; ++i) {
+//     long int number = std::rand() % 1000 - 500;
+//     std::string num_s = std::to_string(number);
+//     BigInt bInt_a(num_s);
+//     BigInt bInt_b = ~bInt_a;
+//     std::string bin_val = to_binary_string(~number);
+//     if (number > 0) {
+//       ASSERT_EQ(bInt_b.sign(), bool(bin_val[0] - '0'));
+//       for (int i = 1; i < bin_val.size(); ++i) {
+//         // std::cout << bInt_a[i - 1] << "! " << bInt_b[i - 1] << "!! "
+//         //           << bin_val[i] << std::endl;
+//         ASSERT_EQ(bInt_b[i - 1], bool(bin_val[i] - '0'));
+//       }
+//     } else {
+//       for (int i = 0; i < bin_val.size(); ++i) {
+//         // std::cout << bInt_a[i] << "! " << bInt_b[i] << "!! " << bin_val[i]
+//         //           << std::endl;
+//         ASSERT_EQ(bInt_b[i], bool(bin_val[i] - '0'));
+//       }
+//     }
 //   }
 // }
 
@@ -410,18 +425,24 @@ std::string to_binary_string(long long int n);
 // }
 
 TEST(Methods, Sum) {
-  for (int i = 0; i < 10; ++i) {
-    long int number1 = std::rand() % 100 - 100;
-    long int number2 = std::rand() % 100;
+  for (int i = 0; i < 1; ++i) {
+    // long int number1 = std::rand() % 100 - 100;
+    // long int number2 = std::rand() % 100;
+    long int number1 = -17;
+    long int number2 = 86;
     std::cout << number1 << " " << number2 << std::endl;
     BigInt bInt_a(number1);
     BigInt bInt_b(number2);
     std::string bin_val1 = to_binary_string(number1 + number2);
-    for (int i = 0; i < bin_val1.size(); ++i) {
-      std::cout << bInt_a[i] << " " << bin_val1[i] << std::endl;
+    for (int i = 0; i < bInt_a.size(); ++i) {
+      // std::cout << bInt_a[i] << " ";
       // ASSERT_EQ(bInt_a[i], bool(bin_val1[i] - '0'));
     }
     std::cout << std::endl;
+    for (int i = 0; i < bInt_b.size(); ++i) {
+      // std::cout << bInt_b[i] << " ";
+      // ASSERT_EQ(bInt_a[i], bool(bin_val1[i] - '0'));
+    }
     bInt_a += bInt_b;
     for (int i = 0; i < bin_val1.size(); ++i) {
       std::cout << bInt_a[i] << " " << bin_val1[i] << std::endl;
@@ -430,7 +451,7 @@ TEST(Methods, Sum) {
   }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

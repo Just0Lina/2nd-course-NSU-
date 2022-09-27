@@ -57,6 +57,7 @@ class BigInt {
   operator std::string() const;
 
   size_t size() const;  // size in bytes
+  bool sign();
 
  private:
   bool sign_ = true;

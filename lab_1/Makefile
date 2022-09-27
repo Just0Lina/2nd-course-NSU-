@@ -28,6 +28,6 @@ clean:
 
 check:
 	cppcheck --enable=all  --language=c++ 
-	
+
  
 .PHONY:  check clean gcov_report tests
