@@ -425,12 +425,12 @@ std::string to_binary_string(long long int n);
 // }
 
 TEST(Methods, Sum) {
-  for (int i = 0; i < 1; ++i) {
-    // long int number1 = std::rand() % 100 - 100;
-    // long int number2 = std::rand() % 100;
-    long int number1 = -17;
-    long int number2 = 86;
-    std::cout << number1 << " " << number2 << std::endl;
+  for (int i = 0; i < 100; ++i) {
+    long int number1 = std::rand() % 1000 - 100;
+    long int number2 = std::rand() % 1000 - 100;
+    // long int number1 = -17;
+    // long int number2 = 86;
+    std::cout << i << " " << number1 << " " << number2 << std::endl;
     BigInt bInt_a(number1);
     BigInt bInt_b(number2);
     std::string bin_val1 = to_binary_string(number1 + number2);
@@ -438,15 +438,15 @@ TEST(Methods, Sum) {
       // std::cout << bInt_a[i] << " ";
       // ASSERT_EQ(bInt_a[i], bool(bin_val1[i] - '0'));
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
     for (int i = 0; i < bInt_b.size(); ++i) {
       // std::cout << bInt_b[i] << " ";
       // ASSERT_EQ(bInt_a[i], bool(bin_val1[i] - '0'));
     }
     bInt_a += bInt_b;
     for (int i = 0; i < bin_val1.size(); ++i) {
-      std::cout << bInt_a[i] << " " << bin_val1[i] << std::endl;
-      // ASSERT_EQ(bInt_a[i], bool(bin_val1[i] - '0'));
+      // std::cout << bInt_a[i] <?< " " << bin_val1[i] << std::endl;
+      ASSERT_EQ(bInt_a[i], bool(bin_val1[i] - '0'));
     }
   }
 }

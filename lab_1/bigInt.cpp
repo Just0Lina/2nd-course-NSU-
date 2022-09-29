@@ -232,18 +232,33 @@ void BigInt::minisub(const BigInt &other) {
        j >= 0 || i >= 0 || buf; --i, --j) {
     if (i >= 0 && j >= 0) {
       bool bit1 = big_int_[i], bit2 = other.big_int_[j];
-      buf = bit1 - buf < bit2 ? 2 : 0;
-      big_int_[i] = (buf - bit2) % 2;
+      bool buf2;
+      if (buf && !bit1 && bit2)
+        buf2 = 1;
+      else
+        buf2 = 0;
+      if (buf) bit1 = !bit1;
+      if (!bit1) buf = bit1 < bit2 ? 1 : 0;
+      big_int_[i] = ((buf || (bit1 && !bit2)) && !buf2) ? 1 : 0;
+      // std::cout << buf << " " << big_int_[i] << std::endl;
       // buf = (bit1 - bit2 - buf) / 2;
+      if (!i) {
+        while (!big_int_[i]) {
+          big_int_.erase(big_int_.begin());
+        }
+      }
     } else if (i >= 0) {
       if (big_int_[i]) {
-        big_int_[i] = false;
+        if (buf) big_int_[i] = 0;
         if (!i) {
           while (!big_int_[i]) {
             big_int_.erase(big_int_.begin());
           }
         }
         break;
+      } else {
+        if (!buf) break;
+        big_int_[i] = 1;
       }
     }
   }
@@ -267,30 +282,7 @@ BigInt &BigInt::operator+=(const BigInt &other) {
     // std::cout << "HEEERE" << std::endl;
     minisum(other);
   } else {
-    // bool tmp_sign = is_less(other) ? other.sign_ : sign_;
-    // std::cout << "HEEERE" << sign_ << std::endl;
-    // if (sign_) {
-    //   BigInt tmp(~other);
-
-    //   minisum(tmp);
-    // } else {
-    //   for (int i = 0; i < big_int_.size(); ++i) {
-    //     std::cout << (*this)[i] << " ";
-    //   }
-    //   std::cout << std::endl;
-    //   // *this ~ = *this;
-    //   BigInt tmp(*this);
-    //   tmp = ~tmp;
-
-    //   for (int i = 0; i < tmp.big_int_.size(); ++i) {
-    //     std::cout << tmp.big_int_[i] << " ";
-    //   }
-    //   minisum(other);
-    // }
-    // sign_ = tmp_sign;
-
     if (is_less(other)) {
-      std::cout << "HERE" << std::endl;
       BigInt tmp(other);
       tmp.minisub(*this);
       *this = tmp;
