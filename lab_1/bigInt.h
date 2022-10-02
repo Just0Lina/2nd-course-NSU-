@@ -1,5 +1,6 @@
 #ifndef BIGINT_H_
 #define BIGINT_H_
+#include <sstream>
 #include <vector>
 
 // #include <fstream>
@@ -46,6 +47,8 @@ class BigInt {
   bool operator>(const BigInt& other) const;   //+
   bool operator<=(const BigInt& other) const;  //+
   bool operator>=(const BigInt& other) const;  //+
+
+  std::string get_number();
 
   void mini_inc(std::vector<bool>& big_int_);
   void mini_dec(std::vector<bool>& big_int_);

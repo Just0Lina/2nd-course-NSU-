@@ -33,7 +33,7 @@ BigInt::BigInt(BigInt &&other) : big_int_(other.big_int_), sign_(other.sign_) {}
 
 BigInt &BigInt::operator=(const BigInt &other) {
   if (this == &other) {
-    throw std::invalid_argument("You are trying to assign the same");
+    // throw std::invalid_argument("You are trying to assign the same");
   }
   if (big_int_.size() != other.big_int_.size())  // resource cannot be
   {
@@ -63,20 +63,31 @@ bool BigInt::sign() { return sign_; }
 BigInt BigInt::operator~() const {
   BigInt result(*this);
   ++result;
-  if (!result.sign_) result.big_int_.erase(result.big_int_.begin());
+  // if (!result.sign_) result.big_int_.erase(result.big_int_.begin());
   result.sign_ = !sign_;
   return result;
 }
 
 BigInt &BigInt::operator^=(const BigInt &other) {
-  for (int i = big_int_.size() - 1, j = other.big_int_.size() - 1; i >= 0;
-       --i, --j) {
+  BigInt tmp1(sign_ ? ~(*this) : *this);
+  BigInt tmp2(other.sign_ ? ~other : other);
+  BigInt tmp1(*this);
+  BigInt tmp2(other);
+  for (int i = tmp1.big_int_.size() - 1, j = tmp2.big_int_.size() - 1;
+       i >= 0 || j >= 0; --i, --j) {
     if (j >= 0) {
-      big_int_[i] = big_int_[i] ^ other.big_int_[j];
+      if (i >= 0)
+        big_int_[i] = tmp1.big_int_[i] ^ tmp2.big_int_[j];
+      else
+        big_int_.insert(big_int_.begin(), 1);
     } else {
       break;
     }
   }
+  while (big_int_[0] == 0) {
+    big_int_.erase(big_int_.begin());
+  }
+  sign_ = sign_ ^ other.sign_;
 
   return *this;
 }
@@ -275,6 +286,16 @@ bool BigInt::is_less(const BigInt &other) const {
       return 0;
   }
   return 0;
+}
+
+std::string BigInt::get_number() {
+  std::stringstream ss;
+  for (auto it = big_int_.begin(); it != big_int_.end(); ++it) {
+    ss << *it;
+  }
+  std::string str = ss.str();
+  if (sign_) str.insert(str.begin(), '-');
+  return str;
 }
 
 BigInt &BigInt::operator+=(const BigInt &other) {
