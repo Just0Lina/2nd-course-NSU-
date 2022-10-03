@@ -106,13 +106,15 @@ std::string to_binary_string(long long int n);
 
 TEST(Operators, operXOR) {
   for (int i = 0; i < 100; ++i) {
-    long int number1 = std::rand() % 1000 - 500;
-    long int number2 = std::rand() % 1000 - 500;
+    long int number1 = -1;
+    long int number2 = -29;
+    // long int number1 = std::rand() % 100 - 50;
+    // long int number2 = std::rand() % 100 - 50;
     BigInt bInt_a(number1);
     BigInt bInt_b(number2);
     std::string bin_val1 = to_binary_string(number1);
 
-    std::cout << bin_val1 << std::endl;
+    std::cout << "Value a " << bin_val1 << " " << number1 << std::endl;
     number1 = number1 ^ number2;
     bin_val1 = to_binary_string(number1);
     std::string bin_val2 = to_binary_string(number2);
@@ -124,8 +126,9 @@ TEST(Operators, operXOR) {
     //     bin_val1[i] = ((bin_val1[i] - '0') ^ (bin_val2[j] - '0')) + '0';
     //   }
     // }
-    std::cout << bin_val2 << std::endl;
-    std::cout << bin_val1 << std::endl;
+    std::cout << "Value b " << bin_val2 << " " << (~bInt_b).get_number() << " "
+              << number2 << std::endl;
+    std::cout << "Res " << bin_val1 << " " << number2 << std::endl;
 
     bInt_a ^= bInt_b;
     std::cout << bInt_a.get_number() << std::endl;
@@ -325,18 +328,18 @@ TEST(Operators, operXOR) {
 //   }
 // }
 
-TEST(Operators, operDecPost1) {
-  for (int i = 0; i < 100; ++i) {
-    long int number1 = std::rand() % 10000 - 5000;
-    BigInt bInt_a(number1);
-    std::string bin_val1 = to_binary_string(number1);
-    std::string bin_val2 = to_binary_string(number1 - 1);
-    BigInt bInt_b = bInt_a--;
-    BigInt bInt_c = bInt_a;
-    ASSERT_EQ(bInt_b.get_number(), bin_val1);
-    ASSERT_EQ(bInt_c.get_number(), bin_val2);
-  }
-}
+// TEST(Operators, operDecPost1) {
+//   for (int i = 0; i < 100; ++i) {
+//     long int number1 = std::rand() % 10000 - 5000;
+//     BigInt bInt_a(number1);
+//     std::string bin_val1 = to_binary_string(number1);
+//     std::string bin_val2 = to_binary_string(number1 - 1);
+//     BigInt bInt_b = bInt_a--;
+//     BigInt bInt_c = bInt_a;
+//     ASSERT_EQ(bInt_b.get_number(), bin_val1);
+//     ASSERT_EQ(bInt_c.get_number(), bin_val2);
+//   }
+// }
 
 // TEST(Operators, operLess) {
 //   for (int i = 0; i < 100; ++i) {

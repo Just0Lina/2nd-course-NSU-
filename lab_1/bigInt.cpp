@@ -69,17 +69,20 @@ BigInt BigInt::operator~() const {
 }
 
 BigInt &BigInt::operator^=(const BigInt &other) {
-  BigInt tmp1(sign_ ? ~(*this) : *this);
-  BigInt tmp2(other.sign_ ? ~other : other);
-  BigInt tmp1(*this);
-  BigInt tmp2(other);
+  BigInt tmp1 = *this, tmp2 = other;
+  if (!(sign_ && other.sign_)) {
+    tmp1 = (sign_ ? ~(*this) : *this);
+    tmp2 = (other.sign_ ? ~other : other);
+  }
+  // BigInt tmp1(*this);
+  // BigInt tmp2(other);
   for (int i = tmp1.big_int_.size() - 1, j = tmp2.big_int_.size() - 1;
        i >= 0 || j >= 0; --i, --j) {
     if (j >= 0) {
       if (i >= 0)
         big_int_[i] = tmp1.big_int_[i] ^ tmp2.big_int_[j];
       else
-        big_int_.insert(big_int_.begin(), 1);
+        big_int_.insert(big_int_.begin(), tmp2.big_int_[j]);
     } else {
       break;
     }
@@ -87,6 +90,7 @@ BigInt &BigInt::operator^=(const BigInt &other) {
   while (big_int_[0] == 0) {
     big_int_.erase(big_int_.begin());
   }
+  if ((sign_ || other.sign_) && !(sign_ && other.sign_)) *this = ~(*this);
   sign_ = sign_ ^ other.sign_;
 
   return *this;
