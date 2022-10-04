@@ -5,133 +5,125 @@
 #include "bigInt.h"
 std::string to_binary_string(long long int n);
 
-// TEST(Constructor, def_cons) {
-//   BigInt bInt_a;
-//   ASSERT_EQ(bInt_a.empty(), true);
-// }
+TEST(Constructor, def_cons) {
+  BigInt bInt_a;
+  ASSERT_EQ(bInt_a.empty(), true);
+}
 
-// TEST(Constructor, int_cons) {
-//   BigInt bInt_a(100);
-//   ASSERT_EQ(bInt_a.empty(), false);
-//   std::string bin_val = to_binary_string(100);
-//   ASSERT_EQ(bInt_a.get_number(), bin_val);
-// }
+TEST(Constructor, int_cons) {
+  BigInt bInt_a(100);
+  ASSERT_EQ(bInt_a.empty(), false);
+  std::string bin_val = to_binary_string(100);
+  ASSERT_EQ(bInt_a.get_number(), bin_val);
+}
 
-// TEST(Constructor, string_cons1) {
-//   ASSERT_THROW({ BigInt bInt_a("sdff"); }, std::invalid_argument);
-// }
+TEST(Constructor, string_cons1) {
+  ASSERT_THROW({ BigInt bInt_a("sdff"); }, std::invalid_argument);
+}
 
-// TEST(Constructor, string_cons) {
-//   for (int i = 0; i < 100; ++i) {
-//     long int number = std::rand() % 10000 - 5000;
-//     std::string num_s = std::to_string(number);
-//     BigInt bInt_a(num_s);
-//     std::string bin_val = to_binary_string(number);
-//     ASSERT_EQ(bInt_a.get_number(), bin_val);
-//   }
-// }
+TEST(Constructor, string_cons) {
+  for (int i = 0; i < 100; ++i) {
+    long int number = std::rand() % 10000 - 5000;
+    std::string num_s = std::to_string(number);
+    BigInt bInt_a(num_s);
+    std::string bin_val = to_binary_string(number);
+    ASSERT_EQ(bInt_a.get_number(), bin_val);
+  }
+}
 
-// TEST(Constructor, copy_cons) {
-//   for (int i = 0; i < 100; ++i) {
-//     long int number = std::rand() % 10000 - 5000;
-//     std::string num_s = std::to_string(number);
-//     BigInt bInt_a(num_s);
-//     BigInt bInt_b(bInt_a);
-//     std::string bin_val = to_binary_string(number);
-//     ASSERT_EQ(bInt_b.get_number(), bin_val);
-//   }
-// }
+TEST(Constructor, copy_cons) {
+  for (int i = 0; i < 100; ++i) {
+    long int number = std::rand() % 10000 - 5000;
+    std::string num_s = std::to_string(number);
+    BigInt bInt_a(num_s);
+    BigInt bInt_b(bInt_a);
+    std::string bin_val = to_binary_string(number);
+    ASSERT_EQ(bInt_b.get_number(), bin_val);
+  }
+}
 
-// TEST(Constructor, move_cons) {
-//   for (int i = 0; i < 100; ++i) {
-//     long int number = std::rand() % 10000 - 5000;
-//     std::string num_s = std::to_string(number);
-//     BigInt bInt_a(num_s);
-//     BigInt bInt_b(std::move(bInt_a));
-//     std::string bin_val = to_binary_string(number);
-//     ASSERT_EQ(bInt_b.get_number(), bin_val);
-//   }
-// }
+TEST(Constructor, move_cons) {
+  for (int i = 0; i < 100; ++i) {
+    long int number = std::rand() % 10000 - 5000;
+    std::string num_s = std::to_string(number);
+    BigInt bInt_a(num_s);
+    BigInt bInt_b(std::move(bInt_a));
+    std::string bin_val = to_binary_string(number);
+    ASSERT_EQ(bInt_b.get_number(), bin_val);
+  }
+}
 
-// TEST(Copy_assignment, assign1) {
-//   for (int i = 0; i < 100; ++i) {
-//     long int number = std::rand() % 100000 - 50000;
-//     BigInt bInt_a(number);
-//     BigInt bInt_b = bInt_a;
-//     ASSERT_EQ(bInt_a.get_number(), bInt_b.get_number());
-//   }
-// }
+TEST(Copy_assignment, assign1) {
+  for (int i = 0; i < 100; ++i) {
+    long int number = std::rand() % 100000 - 50000;
+    BigInt bInt_a(number);
+    BigInt bInt_b = bInt_a;
+    ASSERT_EQ(bInt_a.get_number(), bInt_b.get_number());
+  }
+}
 
-// TEST(Copy_assignment, assign_same) {
-//   for (int i = 0; i < 100; ++i) {
-//     long int number = std::rand() % 10000 - 5000;
-//     std::string num_s = std::to_string(number);
-//     BigInt bInt_a(num_s);
-//     bInt_a = bInt_a;
-//     std::string bin_val = to_binary_string(number);
-//     ASSERT_EQ(bInt_a.get_number(), bin_val);
-//   }
-// }
+TEST(Copy_assignment, assign_same) {
+  for (int i = 0; i < 100; ++i) {
+    long int number = std::rand() % 10000 - 5000;
+    std::string num_s = std::to_string(number);
+    BigInt bInt_a(num_s);
+    bInt_a = bInt_a;
+    std::string bin_val = to_binary_string(number);
+    ASSERT_EQ(bInt_a.get_number(), bin_val);
+  }
+}
 
-// TEST(Operators, oper_negation) {
-//   for (int i = 0; i < 100; ++i) {
-//     long int number = std::rand() % 1000 - 500;
-//     std::string num_s = std::to_string(number);
-//     BigInt bInt_a(num_s);
-//     BigInt bInt_b = ~bInt_a;
-//     std::string bin_val = to_binary_string(~number);
-//     ASSERT_EQ(bInt_b.get_number(), bin_val);
-//   }
-// }
+TEST(Operators, oper_negation) {
+  for (int i = 0; i < 100; ++i) {
+    long int number = std::rand() % 1000 - 500;
+    std::string num_s = std::to_string(number);
+    BigInt bInt_a(num_s);
+    BigInt bInt_b = ~bInt_a;
+    std::string bin_val = to_binary_string(~number);
+    ASSERT_EQ(bInt_b.get_number(), bin_val);
+  }
+}
 
-// TEST(Move_assignment, assign1) {
-//   for (int i = 0; i < 100; ++i) {
-//     long int number = std::rand() % 1000 - 500;
-//     std::string num_s = std::to_string(number);
-//     BigInt bInt_a(num_s);
-//     BigInt bInt_b = std::move(bInt_a);
-//     std::string bin_val = to_binary_string(number);
-//     ASSERT_EQ(bInt_b.get_number(), bin_val);
-//   }
-// }
+TEST(Move_assignment, assign1) {
+  for (int i = 0; i < 100; ++i) {
+    long int number = std::rand() % 1000 - 500;
+    std::string num_s = std::to_string(number);
+    BigInt bInt_a(num_s);
+    BigInt bInt_b = std::move(bInt_a);
+    std::string bin_val = to_binary_string(number);
+    ASSERT_EQ(bInt_b.get_number(), bin_val);
+  }
+}
 
-// TEST(Move_assignment, assign_same) {
-//   for (int i = 0; i < 100; ++i) {
-//     long int number = std::rand() % 1000 - 500;
-//     BigInt bInt_a(number);
-//     bInt_a = std::move(bInt_a);
-//     ASSERT_EQ(bInt_a.empty(), true);
-//   }
-// }
+TEST(Move_assignment, assign_same) {
+  for (int i = 0; i < 100; ++i) {
+    long int number = std::rand() % 1000 - 500;
+    BigInt bInt_a(number);
+    bInt_a = std::move(bInt_a);
+    ASSERT_EQ(bInt_a.empty(), true);
+  }
+}
 
 TEST(Operators, operXOR) {
   for (int i = 0; i < 100; ++i) {
-    long int number1 = -1;
-    long int number2 = -29;
-    // long int number1 = std::rand() % 100 - 50;
-    // long int number2 = std::rand() % 100 - 50;
+    long int number1 = std::rand() % 10000 - 5000;
+    long int number2 = std::rand() % 10000 - 5000;
+
     BigInt bInt_a(number1);
     BigInt bInt_b(number2);
     std::string bin_val1 = to_binary_string(number1);
 
-    std::cout << "Value a " << bin_val1 << " " << number1 << std::endl;
+    std::cout << "Value a " << number1 << std::endl;
     number1 = number1 ^ number2;
     bin_val1 = to_binary_string(number1);
     std::string bin_val2 = to_binary_string(number2);
-
-    // std::string bin_val2 = to_binary_string(number2);
-    // for (int i = bin_val1.size() - 1, j = bin_val2.size() - 1; i >= 0;
-    //      --i, --j) {
-    //   if (j >= 0) {
-    //     bin_val1[i] = ((bin_val1[i] - '0') ^ (bin_val2[j] - '0')) + '0';
-    //   }
-    // }
-    std::cout << "Value b " << bin_val2 << " " << (~bInt_b).get_number() << " "
-              << number2 << std::endl;
-    std::cout << "Res " << bin_val1 << " " << number2 << std::endl;
+    std::cout << "Value b " << number2 << std::endl;
+    // "
+    // << number2 << std::endl;
+    // std::cout << "Res " << bin_val1 << " " << (number1) << std::endl;
 
     bInt_a ^= bInt_b;
-    std::cout << bInt_a.get_number() << std::endl;
+    // std::cout << (bInt_a.get_ones_comp()).get_number() << std::endl;
     ASSERT_EQ(bInt_a.get_number(), bin_val1);
   }
 }

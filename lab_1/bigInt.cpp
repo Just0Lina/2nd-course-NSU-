@@ -68,31 +68,71 @@ BigInt BigInt::operator~() const {
   return result;
 }
 
+BigInt BigInt::get_from_ones_comp() const {
+  BigInt result(*this);
+  std::cout << "FROM" << result.get_number() << std::endl;
+
+  result.sign_ = 0;
+  --result;
+  for (int i = 0; i < size(); ++i) {
+    result.big_int_[i] = !result.big_int_[i];
+  }  // if (!result.sign_)
+     // result.big_int_.erase(result.big_int_.begin());
+  result.sign_ = 1;
+  std::cout << "RES" << result.get_number() << std::endl;
+  return result;
+}
+
+BigInt BigInt::get_ones_comp() const {
+  BigInt result(*this);
+  for (int i = 0; i < size(); ++i) {
+    result.big_int_[i] = !result.big_int_[i];
+  }
+  result.sign_ = 0;
+
+  ++result;
+  std::cout << "RES" << result.get_number() << std::endl;
+  return result;
+}
+
 BigInt &BigInt::operator^=(const BigInt &other) {
   BigInt tmp1 = *this, tmp2 = other;
-  if (!(sign_ && other.sign_)) {
-    tmp1 = (sign_ ? ~(*this) : *this);
-    tmp2 = (other.sign_ ? ~other : other);
+  int size1 = size();
+  int size2 = other.size();
+  bool all_zero = 1;
+  if (sign_) {
+    tmp1 = get_ones_comp();
+    for (int i = size1; i < size2; ++i)
+      tmp1.big_int_.insert(tmp1.big_int_.begin(), 1);
   }
-  // BigInt tmp1(*this);
-  // BigInt tmp2(other);
+  if (other.sign_) {
+    tmp2 = other.get_ones_comp();
+    for (int i = size2; i < size1; ++i)
+      tmp2.big_int_.insert(tmp2.big_int_.begin(), 1);
+  }
   for (int i = tmp1.big_int_.size() - 1, j = tmp2.big_int_.size() - 1;
        i >= 0 || j >= 0; --i, --j) {
     if (j >= 0) {
-      if (i >= 0)
-        big_int_[i] = tmp1.big_int_[i] ^ tmp2.big_int_[j];
-      else
-        big_int_.insert(big_int_.begin(), tmp2.big_int_[j]);
+      if (i >= 0) {
+        tmp1.big_int_[i] = tmp1.big_int_[i] ^ tmp2.big_int_[j];
+        if (tmp1.big_int_[i]) all_zero = 0;
+      } else {
+        tmp1.big_int_.insert(tmp1.big_int_.begin(), tmp2.big_int_[j]);
+        if (tmp2.big_int_[j]) all_zero = 0;
+      }
     } else {
       break;
     }
   }
-  while (big_int_[0] == 0) {
+  *this = tmp1;
+  sign_ = sign_ ^ other.sign_;
+  if (sign_ && !all_zero)
+    *this = get_from_ones_comp();
+  else if (sign_)
+    big_int_.insert(big_int_.begin(), 1);
+  while (!big_int_[0]) {
     big_int_.erase(big_int_.begin());
   }
-  if ((sign_ || other.sign_) && !(sign_ && other.sign_)) *this = ~(*this);
-  sign_ = sign_ ^ other.sign_;
-
   return *this;
 }
 
@@ -292,7 +332,7 @@ bool BigInt::is_less(const BigInt &other) const {
   return 0;
 }
 
-std::string BigInt::get_number() {
+std::string BigInt::get_number() const {
   std::stringstream ss;
   for (auto it = big_int_.begin(); it != big_int_.end(); ++it) {
     ss << *it;

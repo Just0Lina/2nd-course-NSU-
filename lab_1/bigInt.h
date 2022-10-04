@@ -15,6 +15,8 @@ class BigInt {
   BigInt(BigInt&&);              //++
   int comparasion(std::string other);
   ~BigInt() = default;
+  BigInt get_ones_comp() const;
+  BigInt get_from_ones_comp() const;
 
   bool empty();                             //++
   BigInt& operator=(const BigInt&);         //++
@@ -48,7 +50,7 @@ class BigInt {
   bool operator<=(const BigInt& other) const;  //+
   bool operator>=(const BigInt& other) const;  //+
 
-  std::string get_number();
+  std::string get_number() const;
 
   void mini_inc(std::vector<bool>& big_int_);
   void mini_dec(std::vector<bool>& big_int_);
