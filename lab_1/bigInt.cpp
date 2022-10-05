@@ -71,10 +71,11 @@ BigInt BigInt::operator~() const {
 BigInt BigInt::get_from_ones_comp() const {
   BigInt result(*this);
   std::cout << "FROM" << result.get_number() << std::endl;
-
+  int size = result.size();
   result.sign_ = 0;
   --result;
-  for (int i = 0; i < size(); ++i) {
+  if (size != result.size()) result.big_int_.insert(result.big_int_.begin(), 0);
+  for (int i = 0; i < result.size(); ++i) {
     result.big_int_[i] = !result.big_int_[i];
   }  // if (!result.sign_)
      // result.big_int_.erase(result.big_int_.begin());
@@ -89,9 +90,9 @@ BigInt BigInt::get_ones_comp() const {
     result.big_int_[i] = !result.big_int_[i];
   }
   result.sign_ = 0;
-
   ++result;
   std::cout << "RES" << result.get_number() << std::endl;
+
   return result;
 }
 
@@ -117,15 +118,20 @@ BigInt &BigInt::operator^=(const BigInt &other) {
         tmp1.big_int_[i] = tmp1.big_int_[i] ^ tmp2.big_int_[j];
         if (tmp1.big_int_[i]) all_zero = 0;
       } else {
+        std::cout << "GGG ";
         tmp1.big_int_.insert(tmp1.big_int_.begin(), tmp2.big_int_[j]);
         if (tmp2.big_int_[j]) all_zero = 0;
       }
     } else {
-      break;
+      if (tmp1.big_int_[i]) {
+        all_zero = 0;
+        break;
+      }
     }
   }
   *this = tmp1;
   sign_ = sign_ ^ other.sign_;
+  std::cout << sign_ << "( " << all_zero << " )" << other.sign_ << std::endl;
   if (sign_ && !all_zero)
     *this = get_from_ones_comp();
   else if (sign_)
@@ -139,14 +145,56 @@ BigInt &BigInt::operator^=(const BigInt &other) {
 // BigInt &BigInt::operator%=(const BigInt &);
 
 BigInt &BigInt::operator&=(const BigInt &other) {
-  for (int i = big_int_.size() - 1, j = other.big_int_.size() - 1; i >= 0;
-       --i, --j) {
+  bool all_zero = 1, sign1 = sign_, sign2 = other.sign_;
+  BigInt tmp1 = *this, tmp2 = other;
+  int size1 = size();
+  int size2 = other.size();
+  std::cout << "HUY " << tmp1.get_number() << " " << tmp2.get_number() << " "
+            << std::endl;
+  if (sign_) {
+    tmp1 = get_ones_comp();
+    for (int i = size1; i < size2; ++i)
+      tmp1.big_int_.insert(tmp1.big_int_.begin(), 1);
+  }
+  if (other.sign_) {
+    tmp2 = other.get_ones_comp();
+    for (int i = size2; i < size1; ++i)
+      tmp2.big_int_.insert(tmp2.big_int_.begin(), 1);
+  }
+  std::cout << "HUY " << tmp1.get_number() << " " << tmp2.get_number() << " "
+            << std::endl;
+  for (int i = tmp1.big_int_.size() - 1, j = tmp2.big_int_.size() - 1;
+       i >= 0 || j >= 0; --i, --j) {
     if (j >= 0) {
-      big_int_[i] = big_int_[i] & other.big_int_[j];
+      if (i >= 0) {
+        tmp1.big_int_[i] = tmp1.big_int_[i] & tmp2.big_int_[j];
+        if (tmp1.big_int_[i]) all_zero = 0;
+
+      } else {
+        break;
+        // tmp1.big_int_.insert(tmp1.big_int_.begin(), tmp2.big_int_[j]);
+      }
     } else {
-      big_int_[i] = 0;
+      tmp1.big_int_[i] = 0;
     }
   }
+
+  *this = tmp1;
+  std::cout << " !!HUY " << get_number();
+
+  std::cout << sign_ << "( " << all_zero << " )" << other.sign_ << std::endl;
+  if ((sign_ && other.sign_) && !all_zero) {
+    std::cout << "EEF ";
+    *this = get_from_ones_comp();
+  } else if (sign_ && other.sign_ && all_zero)
+    big_int_.insert(big_int_.begin(), 1);
+  // else if (sign_) big_int_.insert(big_int_.begin(), 1);
+  std::cout << "HUY " << get_number();
+  while (!big_int_[0] && !(big_int_.size() == 1)) {
+    big_int_.erase(big_int_.begin());
+  }
+  sign_ = sign_ & other.sign_;
+
   return *this;
 }
 
