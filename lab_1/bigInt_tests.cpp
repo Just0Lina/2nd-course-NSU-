@@ -108,22 +108,15 @@ TEST(Operators, operXOR) {
   for (int i = 0; i < 100; ++i) {
     long int number1 = std::rand() % 10000 - 5000;
     long int number2 = std::rand() % 10000 - 5000;
-
     BigInt bInt_a(number1);
     BigInt bInt_b(number2);
     std::string bin_val1 = to_binary_string(number1);
-
     std::cout << "Value a " << number1 << std::endl;
     number1 = number1 ^ number2;
     bin_val1 = to_binary_string(number1);
     std::string bin_val2 = to_binary_string(number2);
     std::cout << "Value b " << number2 << std::endl;
-    // "
-    // << number2 << std::endl;
-    // std::cout << "Res " << bin_val1 << " " << (number1) << std::endl;
-
     bInt_a ^= bInt_b;
-    // std::cout << (bInt_a.get_ones_comp()).get_number() << std::endl;
     ASSERT_EQ(bInt_a.get_number(), bin_val1);
   }
 }
@@ -132,44 +125,15 @@ TEST(Operators, operBinMul1) {
   for (int i = 0; i < 100; ++i) {
     long int number1 = std::rand() % 10000 - 5000;
     long int number2 = std::rand() % 10000 - 5000;
-
     BigInt bInt_a(number1);
     BigInt bInt_b(number2);
     std::string bin_val1 = to_binary_string(number1);
-
-    std::cout << "Value a " << number1 << std::endl;
     number1 = number1 & number2;
     bin_val1 = to_binary_string(number1);
     std::string bin_val2 = to_binary_string(number2);
-    std::cout << "Value b " << number2 << std::endl;
-    // "
-    // << number2 << std::endl;
-    // std::cout << "Res " << bin_val1 << " " << (number1) << std::endl;
-
     bInt_a &= bInt_b;
-    // std::cout << (bInt_a.get_ones_comp()).get_number() << std::endl;
     ASSERT_EQ(bInt_a.get_number(), bin_val1);
   }
-  // long int number1 = 10;
-  // long int number2 = 8;
-  // std::string num_s1 = std::to_string(number1);
-  // BigInt bInt_a(num_s1);
-  // std::string num_s2 = std::to_string(number2);
-  // BigInt bInt_b(num_s2);
-  // std::string bin_val1 = to_binary_string(number1);
-  // std::string bin_val2 = to_binary_string(number2);
-  // for (int i = bin_val1.size() - 1, j = bin_val2.size() - 1; i >= 0; --i,
-  // --j) {
-  //   if (j >= 0) {
-  //     bin_val1[i] = ((bin_val1[i] - '0') & (bin_val2[j] - '0')) + '0';
-  //   } else {
-  //     bin_val1[i] = '0';
-  //   }
-  // }
-  // bInt_a &= bInt_b;
-  // for (int i = 0; i < bin_val1.size(); ++i) {
-  //   ASSERT_EQ(bInt_a[i], bool(bin_val1[i] - '0'));
-  // }
 }
 
 // TEST(Operators, operBinMul2) {

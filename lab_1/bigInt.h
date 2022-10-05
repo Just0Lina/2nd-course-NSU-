@@ -17,6 +17,8 @@ class BigInt {
   ~BigInt() = default;
   BigInt get_ones_comp() const;
   BigInt get_from_ones_comp() const;
+  BigInt& get_bin_var(int size);
+  void fix_variable_look(bool all_zero);
 
   bool empty();                             //++
   BigInt& operator=(const BigInt&);         //++
