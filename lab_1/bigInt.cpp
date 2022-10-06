@@ -4,8 +4,12 @@
 
 BigInt::BigInt(const int number) : sign_(number < 0) {
   int tmp_number = number >= 0 ? number : number * (-1);
-  for (; tmp_number; tmp_number /= 2) {
-    big_int_.insert(big_int_.begin(), tmp_number % 2);
+  if (!tmp_number) {
+    big_int_.insert(big_int_.begin(), 0);
+  } else {
+    for (; tmp_number; tmp_number /= 2) {
+      big_int_.insert(big_int_.begin(), tmp_number % 2);
+    }
   }
 }
 
@@ -137,7 +141,7 @@ void BigInt::fix_variable_look(bool all_zero) {
     *this = get_from_ones_comp();
   else if (sign_)
     big_int_.insert(big_int_.begin(), 1);
-  while (!big_int_[0] && big_int_.size() != 1) {
+  while (!big_int_[0] && big_int_.size() > 1) {
     big_int_.erase(big_int_.begin());
   }
 }
@@ -170,28 +174,45 @@ BigInt &BigInt::operator&=(const BigInt &other) {
 }
 
 BigInt &BigInt::operator|=(const BigInt &other) {
-  for (int i = big_int_.size() - 1, j = other.big_int_.size() - 1; i >= 0;
+  BigInt tmp1(*this);
+  tmp1.get_bin_var(other.size());
+  BigInt tmp2(other);
+  tmp2.get_bin_var(size());
+  bool all_zero = 1;
+  for (int i = tmp1.size() - 1, j = tmp2.size() - 1; i >= 0 || j >= 0;
        --i, --j) {
     if (j >= 0) {
-      big_int_[i] = big_int_[i] | other.big_int_[j];
+      if (i >= 0) {
+        tmp1.big_int_[i] = tmp1.big_int_[i] | tmp2.big_int_[j];
+        if (tmp1.big_int_[i]) all_zero = 0;
+      } else {
+        tmp1.big_int_.insert(tmp1.big_int_.begin(), tmp2.big_int_[j]);
+        if (tmp2.big_int_[j]) all_zero = 0;
+      }
     } else {
+      all_zero = 0;
       break;
     }
   }
+  *this = tmp1;
+  sign_ = sign_ | other.sign_;
+  fix_variable_look(all_zero);
   return *this;
 }
 
 void BigInt::mini_dec(std::vector<bool> &big_int_) {
   // bool buf = 0;
+  std::cout << get_number() << std::endl;
   for (int i = big_int_.size() - 1; i >= 0; --i) {
     if (!big_int_[i]) {
+      std::cout << "HERE ";
       big_int_[i] = 1;
       // buf = 1;
       if (!i) big_int_.insert(big_int_.begin(), 1);
     } else {
       big_int_[i] = 0;
       if (!i) {
-        while (!big_int_[i]) {
+        while (!big_int_[0] && big_int_.size() > 1) {
           big_int_.erase(big_int_.begin());
           ++i;
         }
@@ -220,19 +241,16 @@ const BigInt BigInt::operator++(int) {
 }
 
 BigInt &BigInt::operator++() {
-  if (!sign_) {
-    mini_inc(big_int_);
-  } else {
-    mini_dec(big_int_);
-  }
+  *this += 1;
+  // if (!sign_) {
+  //   mini_inc(big_int_);
+  // } else {
+  //   mini_dec(big_int_);
+  // }
   return *this;
 }
 BigInt &BigInt::operator--() {
-  if (!sign_) {
-    mini_dec(big_int_);
-  } else {
-    mini_inc(big_int_);
-  }
+  *this += -1;
   return *this;
 }
 
@@ -245,8 +263,8 @@ const BigInt BigInt::operator--(int) {
 bool BigInt::operator<(const BigInt &other) const {
   if (sign_ > other.sign_) return 1;
   if (sign_ < other.sign_) return 0;
-  if (sign_) return is_less(other);
-  return other.is_less(*this);
+  if (sign_) return other.is_less(*this);
+  return is_less(other);
   return 0;
 }
 
@@ -317,7 +335,7 @@ void BigInt::minisub(const BigInt &other) {
       // std::cout << buf << " " << big_int_[i] << std::endl;
       // buf = (bit1 - bit2 - buf) / 2;
       if (!i) {
-        while (!big_int_[i]) {
+        while (!big_int_[0] && big_int_.size() > 1) {
           big_int_.erase(big_int_.begin());
         }
       }
@@ -325,7 +343,7 @@ void BigInt::minisub(const BigInt &other) {
       if (big_int_[i]) {
         if (buf) big_int_[i] = 0;
         if (!i) {
-          while (!big_int_[i]) {
+          while (!big_int_[0] && big_int_.size() > 1) {
             big_int_.erase(big_int_.begin());
           }
         }
@@ -361,6 +379,17 @@ std::string BigInt::get_number() const {
   return str;
 }
 
+BigInt BigInt::operator+() const {
+  BigInt tmp(*this);
+  return tmp;
+}
+
+BigInt BigInt::operator-() const {
+  BigInt tmp(*this);
+  if (tmp.size() != 1 || tmp.big_int_[0]) tmp.sign_ = !tmp.sign_;
+  return tmp;
+}
+
 BigInt &BigInt::operator+=(const BigInt &other) {
   if (sign_ == other.sign_) {
     // std::cout << "HEEERE" << std::endl;
@@ -373,21 +402,15 @@ BigInt &BigInt::operator+=(const BigInt &other) {
     } else {
       minisub(other);
     }
+    if (size() == 1 && !big_int_[0]) sign_ = 0;
   }
   return *this;
 }
 
 BigInt &BigInt::operator-=(const BigInt &other) {
-  if (!sign_ && other.sign_)
-    minisum(other);
-  else if (sign_ == other.sign_) {
-    sign_ = is_less(other) ? !sign_ : sign_;
-    BigInt tmp(~other);
-    minisum(tmp);
-  } else {
-    ~*this;
-    minisum(other);
-  }
+  BigInt tmp(other);
+  tmp.sign_ = !tmp.sign_;
+  *this += tmp;
   return *this;
 }
 

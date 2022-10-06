@@ -9,7 +9,7 @@
 class BigInt {
  public:
   BigInt() = default;
-  explicit BigInt(const int);    //++
+  BigInt(const int);             //++
   explicit BigInt(std::string);  //++
   BigInt(const BigInt&);         //++
   BigInt(BigInt&&);              //++
@@ -34,8 +34,8 @@ class BigInt {
   const BigInt operator--(int);  //++
 
   BigInt& operator+=(const BigInt&);  //++
+  BigInt& operator-=(const BigInt&);  //++
   BigInt& operator*=(const BigInt&);
-  BigInt& operator-=(const BigInt&);
   BigInt& operator/=(const BigInt&);
   BigInt& operator%=(const BigInt&);
   BigInt& operator^=(const BigInt&);  //+
@@ -45,12 +45,12 @@ class BigInt {
   BigInt operator+() const;  // unary +
   BigInt operator-() const;  // unary -
 
-  bool operator==(const BigInt& other) const;  //+
-  bool operator!=(const BigInt& other) const;  //+
+  bool operator==(const BigInt& other) const;  //++
+  bool operator!=(const BigInt& other) const;  //++
   bool operator<(const BigInt& other) const;   //++
-  bool operator>(const BigInt& other) const;   //+
-  bool operator<=(const BigInt& other) const;  //+
-  bool operator>=(const BigInt& other) const;  //+
+  bool operator>(const BigInt& other) const;   //++
+  bool operator<=(const BigInt& other) const;  //++
+  bool operator>=(const BigInt& other) const;  //++
 
   std::string get_number() const;
 
