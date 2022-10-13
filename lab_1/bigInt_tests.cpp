@@ -276,23 +276,80 @@ std::string to_binary_string(long long int n);
 //   }
 // }
 
-TEST(Operators, operUnPlus) {
-  for (int i = 0; i < 100; ++i) {
-    long int number = std::rand() % 1000 - 500;
-    BigInt bInt_a(number);
-    BigInt bInt_b = +bInt_a;
-    std::string bin_val = to_binary_string(+number);
-    ASSERT_EQ(bInt_b.get_number(), bin_val);
+// TEST(Operators, operUnPlus) {
+//   for (int i = 0; i < 100; ++i) {
+//     long int number = std::rand() % 1000 - 500;
+//     BigInt bInt_a(number);
+//     BigInt bInt_b = +bInt_a;
+//     std::string bin_val = to_binary_string(+number);
+//     ASSERT_EQ(bInt_b.get_number(), bin_val);
+//   }
+// }
+
+// TEST(Operators, operUnMinus) {
+//   for (int i = 0; i < 100; ++i) {
+//     long int number = std::rand() % 1000 - 500;
+//     BigInt bInt_a(number);
+//     BigInt bInt_b = -bInt_a;
+//     std::string bin_val = to_binary_string(-number);
+//     ASSERT_EQ(bInt_b.get_number(), bin_val);
+//   }
+// }
+
+// TEST(Operators, operMul) {
+//   for (int i = 0; i < 10; ++i) {
+//     int number1 = std::rand() % 10 - 5;
+//     int number2 = std::rand() % 10 - 5;
+//     int ans = number1 % number2;
+//     std::cout << number1 << " " << number2 << " " << ans << std::endl;
+//     BigInt bInt_a(number1);
+//     BigInt bInt_b(number2);
+
+//     bInt_a *= bInt_b;
+//     std::string bin_val = to_binary_string(number1 * number2);
+//     ASSERT_EQ(bInt_a.get_number(), bin_val);
+//   }
+// }
+
+TEST(Operators, operRem) {
+  for (int i = 0; i < 10000; ++i) {
+    int number1 = std::rand() % 10000 - 5000;
+    int number2 = std::rand() % 10000 - 5000;
+    BigInt bInt_a(number1);
+    BigInt bInt_b(number2);
+    if (number2) {
+      bInt_a %= bInt_b;
+      std::string bin_val = to_binary_string(number1 % number2);
+      ASSERT_EQ(bInt_a.get_number(), bin_val);
+    } else {
+      // ASSERT_THROW(
+      //     {
+      //       bInt_a %= bInt_b;
+      //       int ans = number1 % number2;
+      //     },
+      //     std::out_of_range);
+    }
   }
 }
 
-TEST(Operators, operUnMinus) {
-  for (int i = 0; i < 100; ++i) {
-    long int number = std::rand() % 1000 - 500;
-    BigInt bInt_a(number);
-    BigInt bInt_b = -bInt_a;
-    std::string bin_val = to_binary_string(-number);
-    ASSERT_EQ(bInt_b.get_number(), bin_val);
+TEST(Operators, operQuot) {
+  for (int i = 0; i < 10000; ++i) {
+    int number1 = std::rand() % 10000 - 5000;
+    int number2 = std::rand() % 10000 - 5000;
+    BigInt bInt_a(number1);
+    BigInt bInt_b(number2);
+    if (number2) {
+      bInt_a /= bInt_b;
+      std::string bin_val = to_binary_string(number1 / number2);
+      ASSERT_EQ(bInt_a.get_number(), bin_val);
+    } else {
+      // ASSERT_THROW(
+      //     {
+      //       bInt_a %= bInt_b;
+      //       int ans = number1 % number2;
+      //     },
+      //     std::out_of_range);
+    }
   }
 }
 

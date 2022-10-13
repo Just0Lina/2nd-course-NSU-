@@ -60,6 +60,8 @@ class BigInt {
   void minisub(const BigInt& other);
   bool is_less(const BigInt& other) const;
 
+  std::pair<BigInt, BigInt> get_quotient_reminder(const BigInt& other);
+
   operator int() const;
   operator std::string() const;
 

@@ -415,3 +415,128 @@ BigInt &BigInt::operator-=(const BigInt &other) {
 }
 
 size_t BigInt::size() const { return big_int_.size(); }
+
+BigInt &BigInt::operator*=(const BigInt &other) {
+  BigInt tmp(*this), answer(0);
+  answer.sign_ = sign_ ^ other.sign_;
+  for (auto pos = other.big_int_.rbegin(); pos != other.big_int_.rend();
+       ++pos) {
+    if (*pos) {
+      answer.minisum(tmp);
+    }
+    tmp.big_int_.push_back(0);
+  }
+  *this = answer;
+  if (!(*this)[0]) sign_ = 0;
+  return *this;
+}
+
+// BigInt &BigInt::operator%=(const BigInt &other) {
+//   BigInt tmp1(*this), tmp2(other);
+//   if (is_less(other)) {
+//     return *this;
+//   }
+//   for (int i = tmp2.size(); i < tmp1.size(); ++i) tmp2.big_int_.push_back(0);
+// }
+
+BigInt &BigInt::operator/=(const BigInt &other) {
+  *this = get_quotient_reminder(other).first;
+  sign_ = (*this)[0] ? sign_ ^ other.sign_ : 0;
+
+  return *this;
+}
+
+BigInt &BigInt::operator%=(const BigInt &other) {
+  *this = get_quotient_reminder(other).second;
+  sign_ = (*this)[0] ? sign_ : 0;
+
+  return *this;
+}
+
+std::pair<BigInt, BigInt> BigInt::get_quotient_reminder(const BigInt &other) {
+  BigInt tmp1(*this), tmp2(other);
+  BigInt ans, reminder(0);
+  bool sign1 = sign_, sign2 = other.sign_;
+  if (is_less(other)) {
+    ans.big_int_.push_back(0);
+    reminder = *this;
+    return std::pair<BigInt, BigInt>(ans, reminder);
+  }
+  int counter = 0;
+  for (int i = tmp2.size(); i < tmp1.size(); ++i, ++counter) {
+    tmp2.big_int_.push_back(0);
+  }
+  if (tmp1.is_less(tmp2)) {
+    tmp2.big_int_.pop_back();
+    --counter;
+  }
+  tmp1.sign_ = tmp2.sign_ = 0;
+  if (!counter && tmp1 == tmp2) {
+    ans = 1;
+    ans.sign_ = sign1 ^ sign2;
+    reminder.sign_ = sign1;
+    // std::cout << ans.get_number() << "!! " << reminder.get_number()
+    // << std::endl;
+
+    return std::pair<BigInt, BigInt>(ans, reminder);
+  }
+  BigInt tmp;
+  // std::cout << counter << "!!!l" << std::endl;
+  for (int i = 0; i <= counter; ++i) {
+    tmp = tmp1;
+    tmp1 -= tmp2;
+    if (tmp1.sign_) {
+      ans.big_int_.push_back(0);
+      tmp1 = tmp;
+      // tmp1.sign_ = 0;
+
+      if (i == counter) reminder = tmp;
+    } else {
+      ans.big_int_.push_back(1);
+      if (i == counter) reminder = tmp1;
+    }
+    tmp2.big_int_.pop_back();
+  }
+  // std::cout << ans.get_number() << "!) " << reminder.get_number() <<
+  // std::endl;
+  return std::pair<BigInt, BigInt>(ans, reminder);
+}
+
+// s21_decimal s21_mod(s21_decimal dec1, s21_decimal dec2) {
+//   int shift = sdGetFirstOne(&sd1) - sdGetFirstOne(&sd2);
+//   s21_superdecimal shiftDec2 = sd2;
+//   sdlshift(&shiftDec2, shift);
+//   s21_superdecimal subDec2 = sdDopCode(shiftDec2);
+//   sd1 = sdnormsum(sd1, subDec2);
+//   int reg;
+//   reg = !sdgetbit(&sd1, 191);
+//   int k = 0;
+//   int flag = 0;
+//   for (int i = 0; i < shift && !sdFindBiggest(&sd1, &sd2); i++, k++) {
+//     flag = 1;
+//     sdlshift(&sd1, 1);
+//     if (reg) {
+//       sd1 = sdnormsum(sd1, subDec2);
+//     } else {
+//       sd1 = sdnormsum(sd1, shiftDec2);
+//     }
+//     reg = !sdgetbit(&sd1, 191);
+//   }
+//   if (flag && sdFindBiggest(&sd1, &sd2)) {
+//     sdlshift(&sd1, shift - k);
+//   }
+//   if (sdgetbit(&sd1, 191)) {
+//     sd1 = sdnormsum(sd1, shiftDec2);
+//   }
+//   if (flag) sdrshift(&sd1, shift);
+//   sdecimal_to_decimal(&sd1, &dec1);
+
+//   return dec1;
+// }
+
+BigInt operator+(const BigInt &a, const BigInt &b) {
+  BigInt temp;
+  temp = a;
+  temp += b;
+  return temp;
+}
