@@ -61,13 +61,13 @@ BigInt BigInt::operator~() const {
 BigInt BigInt::get_from_ones_comp() const {
   BigInt result(*this);
   int size = result.size();
-  result.sign_ = 0;
+  result.sign_ = positive;
   --result;
   if (size != result.size()) result.big_int_.insert(result.big_int_.begin(), 0);
   for (int i = 0; i < result.size(); ++i) {
     result.big_int_[i] = !result.big_int_[i];
   }
-  result.sign_ = 1;
+  result.sign_ = negative;
   return result;
 }
 
@@ -123,7 +123,7 @@ void BigInt::fix_variable_look(bool all_zero) {
     *this = get_from_ones_comp();
   else if (sign_)
     big_int_.insert(big_int_.begin(), 1);
-  del_leading_zeroes();
+  rem_leading_zeroes();
 }
 
 BigInt &BigInt::operator&=(const BigInt &other) {
@@ -176,33 +176,6 @@ BigInt &BigInt::operator|=(const BigInt &other) {
   sign_ = sign_ | other.sign_;
   fix_variable_look(all_zero);
   return *this;
-}
-
-void BigInt::mini_dec(std::vector<bool> &big_int_) {
-  for (int i = big_int_.size() - 1; i >= 0; --i) {
-    if (!big_int_[i]) {
-      big_int_[i] = 1;
-      if (!i) big_int_.insert(big_int_.begin(), 1);
-    } else {
-      big_int_[i] = 0;
-      if (!i) {
-        del_leading_zeroes();
-      }
-      break;
-    }
-  }
-}
-
-void BigInt::mini_inc(std::vector<bool> &big_int_) {
-  for (int i = big_int_.size() - 1; i >= 0; --i) {
-    if (big_int_[i] == 1) {
-      big_int_[i] = 0;
-      if (!i) big_int_.insert(big_int_.begin(), 1);
-    } else {
-      big_int_[i] = 1;
-      break;
-    }
-  }
 }
 
 const BigInt BigInt::operator++(int) {
@@ -299,13 +272,13 @@ void BigInt::mini_sub(const BigInt &other) {
       if (!bit1) buf = bit1 < bit2 ? 1 : 0;
       big_int_[i] = ((buf || (bit1 && !bit2)) && !buf2) ? 1 : 0;
       if (!i) {
-        del_leading_zeroes();
+        rem_leading_zeroes();
       }
     } else if (i >= 0) {
       if (big_int_[i]) {
         if (buf) big_int_[i] = 0;
         if (!i) {
-          del_leading_zeroes();
+          rem_leading_zeroes();
         }
         break;
       } else {
@@ -316,7 +289,7 @@ void BigInt::mini_sub(const BigInt &other) {
   }
 }
 
-void BigInt::del_leading_zeroes() {
+void BigInt::rem_leading_zeroes() {
   while (!big_int_[0] && big_int_.size() > 1) {
     big_int_.erase(big_int_.begin());
   }
@@ -357,7 +330,7 @@ BigInt &BigInt::operator+=(const BigInt &other) {
     } else {
       mini_sub(other);
     }
-    if (size() == 1 && !big_int_[0]) sign_ = 0;
+    if (!big_int_[0]) sign_ = positive;
   }
   return *this;
 }
@@ -382,16 +355,16 @@ BigInt &BigInt::operator*=(const BigInt &other) {
     tmp.big_int_.push_back(0);
   }
   *this = answer;
-  del_leading_zeroes();
+  rem_leading_zeroes();
 
-  if (!big_int_[0]) sign_ = 0;
+  if (!big_int_[0]) sign_ = positive;
   return *this;
 }
 
 BigInt &BigInt::operator/=(const BigInt &other) {
   bool sign = sign_;
   *this = get_quotient_reminder(other).first;
-  sign_ = (*this)[0] ? sign ^ other.sign_ : 0;
+  sign_ = (*this)[0] ? sign ^ other.sign_ : positive;
 
   return *this;
 }
@@ -399,36 +372,23 @@ BigInt &BigInt::operator/=(const BigInt &other) {
 BigInt &BigInt::operator%=(const BigInt &other) {
   bool sign = sign_;
   *this = get_quotient_reminder(other).second;
-  sign_ = (*this)[0] ? sign : 0;
+  sign_ = (*this)[0] ? sign : positive;
 
   return *this;
 }
 
 std::pair<BigInt, BigInt> BigInt::get_quotient_reminder(const BigInt &other) {
   if (other == (BigInt)0) throw std::out_of_range("Floating point exception");
-  BigInt tmp1(*this), tmp2(other);
   BigInt ans, reminder(0);
-  bool sign1 = sign_, sign2 = other.sign_;
   if (is_less(other)) {
     ans.big_int_.push_back(0);
     reminder = *this;
     return std::pair<BigInt, BigInt>(ans, reminder);
   }
-  int counter = 0;
-  for (int i = tmp2.size(); i < tmp1.size(); ++i, ++counter) {
-    tmp2.big_int_.push_back(0);
-  }
-  if (tmp1.is_less(tmp2)) {
-    tmp2.big_int_.pop_back();
-    --counter;
-  }
-  tmp1.sign_ = tmp2.sign_ = 0;
-  if (!counter && tmp1 == tmp2) {
-    ans = 1;
-    ans.sign_ = sign1 ^ sign2;
-    reminder.sign_ = sign1;
-    return std::pair<BigInt, BigInt>(ans, reminder);
-  }
+  BigInt tmp1(*this), tmp2(other);
+  bool sign1 = sign_, sign2 = other.sign_;
+  int counter = shift_divider(tmp1, tmp2);
+  tmp1.sign_ = tmp2.sign_ = positive;
   BigInt tmp;
   for (int i = 0; i <= counter; ++i) {
     tmp = tmp1;
@@ -436,8 +396,6 @@ std::pair<BigInt, BigInt> BigInt::get_quotient_reminder(const BigInt &other) {
     if (tmp1.sign_) {
       ans.big_int_.push_back(0);
       tmp1 = tmp;
-      // tmp1.sign_ = 0;
-
       if (i == counter) reminder = tmp;
     } else {
       ans.big_int_.push_back(1);
@@ -447,6 +405,18 @@ std::pair<BigInt, BigInt> BigInt::get_quotient_reminder(const BigInt &other) {
   }
 
   return std::pair<BigInt, BigInt>(ans, reminder);
+}
+
+int BigInt::shift_divider(const BigInt &tmp1, BigInt &tmp2) {
+  int counter = 0;
+  for (int i = tmp2.size(); i < tmp1.size(); ++i, ++counter) {
+    tmp2.big_int_.push_back(0);
+  }
+  if (tmp1.is_less(tmp2)) {
+    tmp2.big_int_.pop_back();
+    --counter;
+  }
+  return counter;
 }
 
 BigInt operator+(const BigInt &a, const BigInt &b) {
@@ -509,3 +479,15 @@ BigInt::operator int() const {
 }
 
 BigInt::operator std::string() const { return std::to_string((*this)); }
+
+std::ostream &operator<<(std::ostream &out, const BigInt &num) {
+  out << std::string(num);
+  return out;
+}
+
+std::istream &operator>>(std::istream &in, BigInt &num) {
+  std::string str;
+  in >> str;
+  num = BigInt(str);
+  return in;
+}

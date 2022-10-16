@@ -327,6 +327,15 @@ TEST(Operators, operQuot) {
   }
 }
 
+TEST(Operators, operOut) {
+  for (int i = 0; i < 100; ++i) {
+    long int number = std::rand() % 1000 - 500;
+    BigInt bInt_a(number);
+    BigInt bInt_b = ~bInt_a;
+    std::cout << bInt_a << " " << bInt_b << std::endl;
+  }
+}
+
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
