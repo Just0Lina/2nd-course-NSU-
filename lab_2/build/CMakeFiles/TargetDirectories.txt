@@ -1,0 +1,3 @@
+/home/alina/oop/build/CMakeFiles/gamebase.dir
+/home/alina/oop/build/CMakeFiles/edit_cache.dir
+/home/alina/oop/build/CMakeFiles/rebuild_cache.dir

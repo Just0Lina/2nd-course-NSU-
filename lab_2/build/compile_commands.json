@@ -1,0 +1,22 @@
+[
+{
+  "directory": "/home/alina/oop/build",
+  "command": "/usr/bin/c++  -I/usr/include/SDL2 -I/usr/include/sdl2_image -I/home/alina/oop/graphics -g -o CMakeFiles/gamebase.dir/main.cpp.o -c /home/alina/oop/main.cpp",
+  "file": "/home/alina/oop/main.cpp"
+},
+{
+  "directory": "/home/alina/oop/build",
+  "command": "/usr/bin/c++  -I/usr/include/SDL2 -I/usr/include/sdl2_image -I/home/alina/oop/graphics -g -o CMakeFiles/gamebase.dir/app/baseapp.cpp.o -c /home/alina/oop/app/baseapp.cpp",
+  "file": "/home/alina/oop/app/baseapp.cpp"
+},
+{
+  "directory": "/home/alina/oop/build",
+  "command": "/usr/bin/c++  -I/usr/include/SDL2 -I/usr/include/sdl2_image -I/home/alina/oop/graphics -g -o CMakeFiles/gamebase.dir/graphics/atlas.cpp.o -c /home/alina/oop/graphics/atlas.cpp",
+  "file": "/home/alina/oop/graphics/atlas.cpp"
+},
+{
+  "directory": "/home/alina/oop/build",
+  "command": "/usr/bin/c++  -I/usr/include/SDL2 -I/usr/include/sdl2_image -I/home/alina/oop/graphics -g -o CMakeFiles/gamebase.dir/graphics/graphics.cpp.o -c /home/alina/oop/graphics/graphics.cpp",
+  "file": "/home/alina/oop/graphics/graphics.cpp"
+}
+]

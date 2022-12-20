@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/gamebase.dir/main.cpp.o CMakeFiles/gamebase.dir/app/baseapp.cpp.o CMakeFiles/gamebase.dir/graphics/atlas.cpp.o CMakeFiles/gamebase.dir/graphics/graphics.cpp.o -o gamebase  -lSDL2 -lSDL2_image 
